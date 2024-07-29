@@ -452,11 +452,11 @@ typedef struct jit_State {
   int32_t retdepth;	/* Return frame depth (count of RETF). */
 
 #if LJ_K32__USED
-  uint32_t k32[LJ_K32__MAX];  /* Common 4 byte constants used by backends. */
+  uint32_t k32[LJ_K32__MAX+1];  /* Common 4 byte constants used by backends. */
 #endif
   TValue ksimd[LJ_KSIMD__MAX*2+1];  /* 16 byte aligned SIMD constants. */
 #if LJ_K64__USED
-  TValue k64[LJ_K64__MAX];  /* Common 8 byte constants. */
+  TValue k64[LJ_K64__MAX+1];  /* Common 8 byte constants. */
 #endif
 
   IRIns *irbuf;		/* Temp. IR instruction buffer. Biased with REF_BIAS. */
