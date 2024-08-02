@@ -10,6 +10,12 @@
 @rem   amalg    amalgamated build
 @rem   static   static linkage
 
+echo "ARGUMENTS = '%*'"
+echo "ARG 0 = '%0'"
+echo "ARG 1 = '%1'"
+echo "ARG 2 = '%2'"
+echo "ARG 3 = '%3'"
+
 @if not defined INCLUDE goto :FAIL
 
 @setlocal
@@ -60,6 +66,7 @@ if exist minilua.exe.manifest^
 :X64
 @if "%1" neq "nogc64" goto :DA
 @shift
+echo "ARG is 'nogc64'"
 @set DASC=vm_x86.dasc
 @set LJCOMPILE=%LJCOMPILE% /DLUAJIT_DISABLE_GC64
 :DA
@@ -96,6 +103,7 @@ buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 
 @if "%1" neq "debug" goto :NODEBUG
 @shift
+echo "ARG is 'debug'"
 @set LJCOMPILE=%LJCOMPILE% %DEBUGCFLAGS%
 @set LJDYNBUILD=%LJDYNBUILD_DEBUG%
 @set LJLINKTYPE=%LJLINKTYPE_DEBUG%
@@ -104,18 +112,21 @@ buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 @set LJLINK=%LJLINK% %LJLINKTYPE% %LJLINKTARGET%
 @if "%1"=="amalg" goto :AMALGDLL
 @if "%1"=="static" goto :STATIC
+echo "ARG is not 'amalg' and not 'static'"
 %LJCOMPILE% %LJDYNBUILD% lj_*.c lib_*.c
 @if errorlevel 1 goto :BAD
 %LJLINK% /DLL /out:%LJDLLNAME% lj_*.obj lib_*.obj
 @if errorlevel 1 goto :BAD
 @goto :MTDLL
 :STATIC
+echo "ARG is 'static'"
 %LJCOMPILE% lj_*.c lib_*.c
 @if errorlevel 1 goto :BAD
 %LJLIB% /OUT:%LJLIBNAME% lj_*.obj lib_*.obj
 @if errorlevel 1 goto :BAD
 @goto :MTDLL
 :AMALGDLL
+echo "ARG is 'amalg'"
 %LJCOMPILE% %LJDYNBUILD% ljamalg.c
 @if errorlevel 1 goto :BAD
 %LJLINK% /DLL /out:%LJDLLNAME% ljamalg.obj lj_vm.obj
